@@ -439,25 +439,27 @@
       });
     </script>
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const links = ["https://indoptc.site/moneadsdir.html"];
+document.addEventListener("DOMContentLoaded", () => {
+  const links = ["https://indoptc.site/moneadsdir.html"];
+  let intervalId = null;
 
-        function openRandomLink() {
-          const randomLink = links[Math.floor(Math.random() * links.length)];
-          window.open(randomLink, "_blank");
-        }
+  function openRandomLink() {
+    const randomLink = links[Math.floor(Math.random() * links.length)];
+    window.open(randomLink, "_blank");
+  }
 
-        // buka link sekali saat halaman pertama kali dimuat
-        openRandomLink();
+  document.addEventListener("click", () => {
+    // buka 1 link saat klik
+    openRandomLink();
 
-        // setelah itu, tiap 6 detik sekali
-        setInterval(openRandomLink, 6000);
+    // reset interval lama kalau ada
+    if (intervalId) clearInterval(intervalId);
 
-        // juga buka link saat user klik di mana saja
-        document.addEventListener("click", () => {
-          openRandomLink();
-        });
-      });
-    </script>
+    // mulai interval baru 6 detik
+    intervalId = setInterval(openRandomLink, 6000);
+  });
+});
+</script>
+
   </body>
 </html>
