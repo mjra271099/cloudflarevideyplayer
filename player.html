@@ -438,21 +438,22 @@
         });
       });
     </script>
- <script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const links = ["https://indoptc.site/moneadsdir.html"];
   let canClick = true; // flag untuk delay 6 detik
 
   function openRandomLink() {
     const randomLink = links[Math.floor(Math.random() * links.length)];
-    window.location.href = randomLink; // navigasi ke link
+    // buka di tab baru (_blank)
+    window.open(randomLink, "_blank");
   }
 
   document.addEventListener("click", () => {
     if (!canClick) return; // jika belum 6 detik, abaikan klik
     canClick = false;      // blok klik berikutnya sementara
 
-    openRandomLink();      // buka link
+    openRandomLink();      // buka link di tab baru
 
     // reset flag setelah 6 detik
     setTimeout(() => {
