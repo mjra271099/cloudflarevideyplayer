@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VideyPlayer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1000px;
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .video-container {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        background-color: #000;
+      }
+
+      #videoPlayer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+      }
+
+      .video-controls {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: rgba(20, 20, 20, 0.9);
+        color: white;
+      }
+
+      .control-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: all 0.2s;
+        outline: none;
+      }
+
+      .control-btn:hover {
+        color: #fdbb2d;
+        transform: scale(1.1);
+      }
+
+      .progress-container {
+        flex-grow: 1;
+        height: 8px;
+        background-color: #444;
+        border-radius: 4px;
+        margin: 0 15px;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(to right, #fdbb2d, #b21f1f);
+        border-radius: 4px;
+        width: 0%;
+      }
+
+      .volume-container {
+        display: flex;
+        align-items: center;
+        margin: 0 15px;
+      }
+
+      .volume-slider {
+        width: 80px;
+        margin-left: 10px;
+
+        -webkit-appearance: none; /* Safari / Chrome lama */
+        -moz-appearance: none; /* Firefox lama */
+        appearance: none; /* Standar modern */
+
+        height: 5px;
+        border-radius: 5px;
+        background: #444;
+        outline: none;
+      }
+
+      .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fdbb2d;
+        cursor: pointer;
+      }
+
+      .time-display {
+        font-size: 14px;
+        margin: 0 10px;
+        color: #ddd;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .playback-speed {
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 0 10px;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .fullscreen-btn {
+        margin-left: 10px;
+      }
+
+      .video-title {
+        padding: 15px 20px;
+        color: white;
+        font-size: 22px;
+        font-weight: 500;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-bottom: 1px solid #333;
+      }
+
+      .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fdbb2d;
+        animation: spin 1s ease-in-out infinite;
+        display: none;
+      }
+
+      @keyframes spin {
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      .error-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+        display: none;
+      }
+
+      .error-message i {
+        font-size: 40px;
+        color: #b21f1f;
+        margin-bottom: 10px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .video-controls {
+          padding: 10px 15px;
+        }
+
+        .control-btn {
+          font-size: 16px;
+          margin-right: 10px;
+        }
+
+        .volume-slider {
+          width: 60px;
+        }
+
+        .time-display {
+          font-size: 12px;
+        }
+
+        .playback-speed {
+          padding: 4px 8px;
+          font-size: 12px;
+        }
+
+        .video-title {
+          font-size: 18px;
+          padding: 10px 15px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .volume-container {
+          display: none;
+        }
+
+        .playback-speed {
+          display: none;
+        }
+
+        .time-display {
+          margin: 0 5px;
+        }
+      }
+
+      /* Fullscreen styles */
+      :fullscreen .video-container {
+        width: 100%;
+        height: 100%;
+        padding-top: 0;
+      }
+
+      :fullscreen .video-controls {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="video-title">biolink.doodestream.com</div>
+      <div class="video-container">
+        <video id="videoPlayer"></video>
+        <div class="loading-spinner" id="spinner"></div>
+        <div class="error-message" id="errorMessage">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Video tidak dapat dimuat</p>
+        </div>
+      </div>
+      <div class="video-controls">
+        <button class="control-btn" id="playPauseBtn">
+          <i class="fas fa-play"></i>
+        </button>
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="time-display">
+          <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+        </div>
+        <div class="volume-container">
+          <button class="control-btn" id="muteBtn">
+            <i class="fas fa-volume-up"></i>
+          </button>
+          <input
+            type="range"
+            class="volume-slider"
+            id="volumeSlider"
+            min="0"
+            max="1"
+            step="0.1"
+            value="1"
+          />
+        </div>
+        <select class="playback-speed" id="playbackSpeed">
+          <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+        <button class="control-btn fullscreen-btn" id="fullscreenBtn">
+          <i class="fas fa-expand"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Elemen DOM
+        const videoPlayer = document.getElementById("videoPlayer");
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const muteBtn = document.getElementById("muteBtn");
+        const volumeSlider = document.getElementById("volumeSlider");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        const currentTimeElement = document.getElementById("currentTime");
+        const durationElement = document.getElementById("duration");
+        const playbackSpeed = document.getElementById("playbackSpeed");
+        const fullscreenBtn = document.getElementById("fullscreenBtn");
+        const spinner = document.getElementById("spinner");
+        const errorMessage = document.getElementById("errorMessage");
+
+        // Ambil parameter video ID dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get("id");
+
+        if (videoId) {
+          // Tampilkan loading spinner
+          spinner.style.display = "block";
+
+          // Set sumber video
+          videoPlayer.src = "https://cdn.videy.co/" + videoId + ".mp4";
+
+          // Event ketika video dimuat
+          videoPlayer.addEventListener("loadeddata", function () {
+            spinner.style.display = "none";
+            durationElement.textContent = formatTime(videoPlayer.duration);
+          });
+
+          // Event ketika video sedang dimuat
+          videoPlayer.addEventListener("waiting", function () {
+            spinner.style.display = "block";
+          });
+
+          videoPlayer.addEventListener("canplay", function () {
+            spinner.style.display = "none";
+          });
+
+          // Event error video
+          videoPlayer.addEventListener("error", function () {
+            spinner.style.display = "none";
+            errorMessage.style.display = "block";
+          });
+
+          // Otomatis play jika diizinkan
+          videoPlayer.play().catch(function (error) {
+            console.log("Autoplay tidak diizinkan: ", error);
+          });
+        } else {
+          errorMessage.innerHTML =
+            '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
+          errorMessage.style.display = "block";
+        }
+
+        // Format waktu (detik ke menit:detik)
+        function formatTime(seconds) {
+          let minutes = Math.floor(seconds / 60);
+          let secs = Math.floor(seconds % 60);
+          return `${minutes
+            .toString()
+            .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        }
+
+        // Toggle play/pause
+        playPauseBtn.addEventListener("click", function () {
+          if (videoPlayer.paused) {
+            videoPlayer.play();
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          } else {
+            videoPlayer.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          }
+        });
+
+        // Update progress bar
+        videoPlayer.addEventListener("timeupdate", function () {
+          const currentTime = videoPlayer.currentTime;
+          const duration = videoPlayer.duration;
+          const progressPercent = (currentTime / duration) * 100;
+
+          progressBar.style.width = `${progressPercent}%`;
+          currentTimeElement.textContent = formatTime(currentTime);
+        });
+
+        // Klik pada progress bar untuk mengubah posisi pemutaran
+        progressContainer.addEventListener("click", function (e) {
+          const progressWidth = this.clientWidth;
+          const clickX = e.offsetX;
+          const duration = videoPlayer.duration;
+
+          videoPlayer.currentTime = (clickX / progressWidth) * duration;
+        });
+
+        // Toggle mute/unmute
+        muteBtn.addEventListener("click", function () {
+          videoPlayer.muted = !videoPlayer.muted;
+          muteBtn.innerHTML = videoPlayer.muted
+            ? '<i class="fas fa-volume-mute"></i>'
+            : '<i class="fas fa-volume-up"></i>';
+
+          volumeSlider.value = videoPlayer.muted ? 0 : videoPlayer.volume;
+        });
+
+        // Ubah volume
+        volumeSlider.addEventListener("input", function () {
+          videoPlayer.volume = volumeSlider.value;
+          videoPlayer.muted = volumeSlider.value === 0;
+
+          muteBtn.innerHTML =
+            volumeSlider.value == 0
+              ? '<i class="fas fa-volume-mute"></i>'
+              : '<i class="fas fa-volume-up"></i>';
+        });
+
+        // Ubah kecepatan pemutaran
+        playbackSpeed.addEventListener("change", function () {
+          videoPlayer.playbackRate = parseFloat(this.value);
+        });
+
+        // Toggle fullscreen
+        fullscreenBtn.addEventListener("click", function () {
+          if (!document.fullscreenElement) {
+            document.querySelector(".container").requestFullscreen();
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+          } else {
+            document.exitFullscreen();
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+          }
+        });
+
+        // Perbarui ikon play/pause saat video dijalankan/dijeda
+        videoPlayer.addEventListener("play", function () {
+          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        });
+
+        videoPlayer.addEventListener("pause", function () {
+          playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const links = ["https://indoptc.site/moneadsdir.html"];
+
+        function openRandomLink() {
+          const randomLink = links[Math.floor(Math.random() * links.length)];
+          window.open(randomLink, "_blank");
+        }
+
+        // buka link sekali saat halaman pertama kali dimuat
+        openRandomLink();
+
+        // setelah itu, tiap 6 detik sekali
+        setInterval(openRandomLink, 6000);
+
+        // juga buka link saat user klik di mana saja
+        document.addEventListener("click", () => {
+          openRandomLink();
+        });
+      });
+    </script>
+  </body>
+</html>
