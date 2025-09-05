@@ -189,10 +189,7 @@
         <i class="fas fa-play-circle"></i>
       </div>
       <h1>Video Siap Diputar</h1>
-      <p>
-        Klik tombol di bawah untuk menonton video. Iklan akan dibuka di tab
-        baru.
-      </p>
+      <p>Klik tombol di bawah untuk menonton video.</p>
       <button id="watchBtn">Tonton Video</button>
       <div class="countdown" id="countdown"></div>
       <div class="ad-notice">
@@ -207,7 +204,7 @@
       const videoId = path.split("/")[0];
 
       // Countdown timer
-      let countdown = 5;
+      let countdown = 3;
       const countdownElement = document.getElementById("countdown");
       const watchBtn = document.getElementById("watchBtn");
 
@@ -241,5 +238,47 @@
         window.location.href = "/player.html?id=" + videoId;
       });
     </script>
+    <!-- Histats.com  (div with counter) -->
+    <div id="histats_counter"></div>
+    <!-- Histats.com  START  (aync)-->
+    <script type="text/javascript">
+      var _Hasync = _Hasync || [];
+      _Hasync.push([
+        "Histats.startgif",
+        '1,4974926,4,10022,"div#histatsC {position: absolute;top:0px;right:0px;}body>div#histatsC {position: fixed;}"',
+      ]);
+      _Hasync.push(["Histats.fasi", "1"]);
+      _Hasync.push(["Histats.track_hits", ""]);
+      (function () {
+        var hs = document.createElement("script");
+        hs.type = "text/javascript";
+        hs.async = true;
+        hs.src = "//s10.histats.com/js15_giftop_as.js";
+        (
+          document.getElementsByTagName("head")[0] ||
+          document.getElementsByTagName("body")[0]
+        ).appendChild(hs);
+      })();
+    </script>
+    <noscript
+      ><style type="text/css">
+        div#histatsC {
+          position: absolute;
+          top: 0px;
+          right: 0px;
+        }
+        body > div#histatsC {
+          position: fixed;
+        }
+      </style>
+      <a href="/" alt="" target="_blank"
+        ><div id="histatsC">
+          <img
+            border="0"
+            src="//s4is.histats.com/stats/i/4974926.gif?4974926&103"
+          /></div
+      ></a>
+    </noscript>
+    <!-- Histats.com  END  -->
   </body>
 </html>
