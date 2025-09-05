@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="twitter:card" content="player" />
-    <meta name="twitter:site" content="@YourSite" />
+    <meta name="twitter:site" content="@salhadillah" />
     <meta name="twitter:title" content="VideyPlayer" />
     <meta name="twitter:description" content="Pemutar Video Responsif" />
-    <meta name="twitter:player" content="https://yourdomain.com/player.html" />
+    <meta
+      name="twitter:player"
+      content="https://videykuplay.pages.dev/player.html"
+    />
     <meta name="twitter:player:width" content="1280" />
     <meta name="twitter:player:height" content="720" />
     <title>VideyPlayer</title>
@@ -324,6 +327,46 @@
           margin-right: 8px;
           width: 28px;
           height: 28px;
+        }
+      }
+      /* Perbaikan untuk iPhone SE dan perangkat kecil serupa */
+      @media (max-width: 375px) and (max-height: 667px) {
+        .video-title {
+          font-size: 12px;
+          padding: 5px 8px;
+        }
+
+        .video-controls {
+          padding: 5px 8px;
+        }
+
+        .control-btn {
+          width: 26px;
+          height: 26px;
+          margin-right: 6px;
+        }
+
+        .time-display {
+          font-size: 10px;
+        }
+
+        .progress-container {
+          margin: 5px 6px;
+        }
+      }
+
+      /* Untuk perangkat dengan tinggi sangat terbatas */
+      @media (max-height: 600px) {
+        .video-title {
+          display: none; /* Sembunyikan judul untuk menghemat ruang */
+        }
+
+        .video-container {
+          height: calc(100% - 40px);
+        }
+
+        .video-controls {
+          padding: 5px;
         }
       }
 
