@@ -67,6 +67,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        cursor: pointer;
       }
 
       #videoPlayer {
@@ -249,12 +250,6 @@
         margin-bottom: 10px;
       }
 
-      /* Hide controls after inactivity */
-      .hide-controls {
-        opacity: 0;
-        transition: opacity 0.5s ease;
-      }
-
       /* Touch device improvements */
       @media (hover: none) {
         .control-btn {
@@ -408,14 +403,49 @@
           padding: 6px 8px;
         }
       }
+
+      /* Center play button overlay */
+      .center-play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.6);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        z-index: 4;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .center-play-btn i {
+        color: white;
+        font-size: 30px;
+      }
+
+      .video-container:hover .center-play-btn {
+        opacity: 1;
+      }
+
+      .video-container.paused .center-play-btn {
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="video-title">biolink.doodestream.com</div>
 
-      <div class="video-container">
+      <div class="video-container" id="videoContainer">
         <video id="videoPlayer" playsinline></video>
+        <div class="center-play-btn" id="centerPlayBtn">
+          <i class="fas fa-play"></i>
+        </div>
         <div class="loading-spinner" id="spinner"></div>
         <div class="error-message" id="errorMessage">
           <i class="fas fa-exclamation-circle"></i>
@@ -476,11 +506,8 @@
         const spinner = document.getElementById("spinner");
         const errorMessage = document.getElementById("errorMessage");
         const container = document.querySelector(".container");
-        const videoControls = document.querySelector(".video-controls");
-
-        // Variables for hide controls timeout
-        let controlsTimeout;
-        const hideControlsDelay = 3000;
+        const videoContainer = document.getElementById("videoContainer");
+        const centerPlayBtn = document.getElementById("centerPlayBtn");
 
         // Ambil parameter video ID dari URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -522,6 +549,7 @@
             playPromise.catch(function (error) {
               console.log("Autoplay tidak diizinkan: ", error);
               playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+              videoContainer.classList.add("paused");
             });
           }
         } else {
@@ -541,16 +569,39 @@
             .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
         }
 
-        // Toggle play/pause
-        playPauseBtn.addEventListener("click", function () {
+        // Fungsi toggle play/pause
+        function togglePlayPause() {
           if (videoPlayer.paused || videoPlayer.ended) {
             videoPlayer.play();
             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            centerPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            videoContainer.classList.remove("paused");
           } else {
             videoPlayer.pause();
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            centerPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+            videoContainer.classList.add("paused");
           }
-          showControlsTemporarily();
+        }
+
+        // Toggle play/pause dari tombol kontrol
+        playPauseBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          togglePlayPause();
+        });
+
+        // Toggle play/pause dari tombol tengah
+        centerPlayBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          togglePlayPause();
+        });
+
+        // Toggle play/pause dari klik pada video
+        videoContainer.addEventListener("click", function (e) {
+          // Jangan trigger jika klik pada progress bar atau kontrol lainnya
+          if (e.target === videoContainer || e.target === videoPlayer) {
+            togglePlayPause();
+          }
         });
 
         // Update progress bar
@@ -570,7 +621,6 @@
           const duration = videoPlayer.duration;
 
           videoPlayer.currentTime = (clickX / progressWidth) * duration;
-          showControlsTemporarily();
         });
 
         // Toggle mute/unmute
@@ -581,7 +631,6 @@
             : '<i class="fas fa-volume-up"></i>';
 
           volumeSlider.value = videoPlayer.muted ? 0 : videoPlayer.volume;
-          showControlsTemporarily();
         });
 
         // Ubah volume
@@ -593,14 +642,11 @@
             volumeSlider.value == 0
               ? '<i class="fas fa-volume-mute"></i>'
               : '<i class="fas fa-volume-up"></i>';
-
-          showControlsTemporarily();
         });
 
         // Ubah kecepatan pemutaran
         playbackSpeed.addEventListener("change", function () {
           videoPlayer.playbackRate = parseFloat(this.value);
-          showControlsTemporarily();
         });
 
         // Toggle fullscreen dengan fallback untuk browser yang berbeda
@@ -635,16 +681,19 @@
             }
             fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
           }
-          showControlsTemporarily();
         });
 
         // Perbarui ikon play/pause saat video dijalankan/dijeda
         videoPlayer.addEventListener("play", function () {
           playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          centerPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+          videoContainer.classList.remove("paused");
         });
 
         videoPlayer.addEventListener("pause", function () {
           playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          centerPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+          videoContainer.classList.add("paused");
         });
 
         // Handle fullscreen change events for different browsers
@@ -672,34 +721,6 @@
           }
         }
 
-        // Fungsi untuk menampilkan kontrol sementara
-        function showControlsTemporarily() {
-          videoControls.classList.remove("hide-controls");
-          clearTimeout(controlsTimeout);
-          controlsTimeout = setTimeout(() => {
-            if (!videoPlayer.paused) {
-              videoControls.classList.add("hide-controls");
-            }
-          }, hideControlsDelay);
-        }
-
-        // Event untuk menampilkan kontrol saat dihover/disentuh
-        container.addEventListener("mousemove", showControlsTemporarily);
-        container.addEventListener("touchstart", showControlsTemporarily);
-
-        // Sembunyikan kontrol setelah delay
-        controlsTimeout = setTimeout(() => {
-          if (!videoPlayer.paused) {
-            videoControls.classList.add("hide-controls");
-          }
-        }, hideControlsDelay);
-
-        // Pastikan kontrol terlihat saat video dijeda
-        videoPlayer.addEventListener("pause", () => {
-          videoControls.classList.remove("hide-controls");
-          clearTimeout(controlsTimeout);
-        });
-
         // Handle orientation changes
         window.addEventListener("orientationchange", function () {
           // Small timeout to wait for orientation change to complete
@@ -721,8 +742,11 @@
           window.open(randomLink, "_blank");
         }
 
-        document.addEventListener("click", () => {
+        // Hanya trigger untuk klik di luar video player
+        document.addEventListener("click", (e) => {
           if (!canClick) return; // jika belum 6 detik, abaikan klik
+          if (e.target.closest(".container")) return; // jangan trigger jika klik di dalam player
+
           canClick = false; // blok klik berikutnya sementara
 
           openRandomLink(); // buka link di tab baru
