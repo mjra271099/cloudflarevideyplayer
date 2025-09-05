@@ -88,7 +88,7 @@
         color: white;
         flex-shrink: 0;
         position: relative;
-        z-index: 10;
+        z-index: 1000; /* Increased z-index */
       }
 
       .control-btn {
@@ -370,12 +370,23 @@
         }
       }
 
-      /* Fullscreen styles */
+      /* Fullscreen styles - UPDATED */
+      .container:fullscreen {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
       .container:-webkit-full-screen {
         width: 100%;
         height: 100%;
         max-width: 100%;
         border-radius: 0;
+        display: flex;
+        flex-direction: column;
       }
 
       .container:-ms-fullscreen {
@@ -383,42 +394,42 @@
         height: 100%;
         max-width: 100%;
         border-radius: 0;
+        display: flex;
+        flex-direction: column;
       }
 
-      .container:fullscreen {
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        border-radius: 0;
+      /* Memastikan video-container mengisi ruang yang tersedia */
+      .container:fullscreen .video-container {
+        flex: 1;
+        height: auto;
       }
 
-      :-webkit-full-screen .video-container {
-        height: calc(100% - 50px);
+      .container:-webkit-full-screen .video-container {
+        flex: 1;
+        height: auto;
       }
 
-      :-ms-fullscreen .video-container {
-        height: calc(100% - 50px);
+      .container:-ms-fullscreen .video-container {
+        flex: 1;
+        height: auto;
       }
 
-      :fullscreen .video-container {
-        height: calc(100% - 50px);
-      }
-
-      :-webkit-full-screen .video-controls {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-      }
-
-      :-ms-fullscreen .video-controls {
-        position: fixed;
-        bottom: 0;
+      /* Memastikan kontrol video tetap terlihat */
+      .container:fullscreen .video-controls {
+        position: static;
+        bottom: auto;
         width: 100%;
       }
 
-      :fullscreen .video-controls {
-        position: fixed;
-        bottom: 0;
+      .container:-webkit-full-screen .video-controls {
+        position: static;
+        bottom: auto;
+        width: 100%;
+      }
+
+      .container:-ms-fullscreen .video-controls {
+        position: static;
+        bottom: auto;
         width: 100%;
       }
 
@@ -477,6 +488,14 @@
 
       .video-container.paused .center-play-btn {
         opacity: 1;
+      }
+
+      /* Histats counter positioning */
+      #histats_counter {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 9999;
       }
     </style>
   </head>
@@ -787,8 +806,13 @@
 
         // Hanya trigger untuk klik di luar video player
         document.addEventListener("click", (e) => {
-          if (!canClick) return; // jika belum 6 detik, abaikan klik
-          if (e.target.closest(".container")) return; // jangan trigger jika klik di dalam player
+          // Cek apakah klik terjadi pada elemen kontrol video
+          const isControlElement =
+            e.target.closest(".video-controls") ||
+            e.target.closest(".video-title") ||
+            e.target.closest(".center-play-btn");
+
+          if (!canClick || isControlElement) return; // jika belum 6 detik atau klik pada kontrol, abaikan klik
 
           canClick = false; // blok klik berikutnya sementara
 
