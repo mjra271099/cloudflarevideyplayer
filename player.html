@@ -867,5 +867,41 @@
       ></a>
     </noscript>
     <!-- Histats.com  END  -->
+     <script>
+// Fungsi deteksi Developer Tools
+function detectDevTools() {
+    const threshold = 160; // batas ukuran untuk deteksi
+    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+
+    if (widthThreshold || heightThreshold) {
+        // Jika DevTools terbuka, redirect
+        window.location.href = "https://doodestream.com";
+    }
+}
+
+// Cek setiap 500ms
+setInterval(detectDevTools, 500);
+
+// Mencegah klik kanan
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    alert("Klik kanan tidak diizinkan!");
+});
+
+// Mencegah tombol tertentu (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+document.addEventListener('keydown', function(e) {
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.ctrlKey && e.key === "U")
+    ) {
+        e.preventDefault();
+        alert("Aksi ini tidak diizinkan!");
+        window.location.href = "https://doodestream.com";
+    }
+});
+</script>
+
   </body>
 </html>
