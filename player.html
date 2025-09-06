@@ -606,20 +606,30 @@
           });
 
           // Otomatis play jika diizinkan (dengan playsinline untuk iOS)
-          const playPromise = videoPlayer.play();
+        //   const playPromise = videoPlayer.play();
 
-          if (playPromise !== undefined) {
-            playPromise.catch(function (error) {
-              console.log("Autoplay tidak diizinkan: ", error);
-              playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-              videoContainer.classList.add("paused");
-            });
-          }
-        } else {
-          errorMessage.innerHTML =
-            '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
-          errorMessage.style.display = "block";
-        }
+        //   if (playPromise !== undefined) {
+        //     playPromise.catch(function (error) {
+        //       console.log("Autoplay tidak diizinkan: ", error);
+        //       playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        //       videoContainer.classList.add("paused");
+        //     });
+        //   }
+        // } else {
+        //   errorMessage.innerHTML =
+        //     '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
+        //   errorMessage.style.display = "block";
+        // }
+        // Awalnya video dalam keadaan pause
+videoPlayer.pause();
+playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+videoContainer.classList.add("paused");
+} else {
+  errorMessage.innerHTML =
+    '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
+  errorMessage.style.display = "block";
+}
+
 
         // Format waktu (detik ke menit:detik)
         function formatTime(seconds) {
