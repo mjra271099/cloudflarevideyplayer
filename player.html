@@ -804,38 +804,43 @@ videoContainer.classList.add("paused");
         });
       });
     </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const links = ["https://indoptc.site/moneadsdir.php"];
-        let canClick = true; // flag untuk delay 6 detik
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const links = ["#"];
+  let canClick = true; // flag untuk delay 6 detik
 
-        function openRandomLink() {
-          const randomLink = links[Math.floor(Math.random() * links.length)];
-          // buka di tab baru (_blank)
-          window.open(randomLink, "_blank");
-        }
+  function openRandomLink() {
+    const randomLink = links[Math.floor(Math.random() * links.length)];
 
-        // Hanya trigger untuk klik di luar video player
-        document.addEventListener("click", (e) => {
-          // Cek apakah klik terjadi pada elemen kontrol video
-          const isControlElement =
-            e.target.closest(".video-controls") ||
-            e.target.closest(".video-title") ||
-            e.target.closest(".center-play-btn");
+    // kalau kosong atau hanya "#", jangan lakukan apa-apa
+    if (!randomLink || randomLink === "#") {
+      return;
+    }
 
-          if (!canClick || isControlElement) return; // jika belum 6 detik atau klik pada kontrol, abaikan klik
+    // buka di tab baru (_blank)
+    window.open(randomLink, "_blank");
+  }
 
-          canClick = false; // blok klik berikutnya sementara
+  // Hanya trigger untuk klik di luar video player
+  document.addEventListener("click", (e) => {
+    const isControlElement =
+      e.target.closest(".video-controls") ||
+      e.target.closest(".video-title") ||
+      e.target.closest(".center-play-btn");
 
-          openRandomLink(); // buka link di tab baru
+    if (!canClick || isControlElement) return;
 
-          // reset flag setelah 6 detik
-          setTimeout(() => {
-            canClick = true;
-          }, 9000);
-        });
-      });
-    </script>
+    canClick = false;
+
+    openRandomLink();
+
+    setTimeout(() => {
+      canClick = true;
+    }, 9000);
+  });
+});
+</script>
+
     <!-- Histats.com  (div with counter) -->
     <div id="histats_counter"></div>
     <!-- Histats.com  START  (aync)-->
