@@ -3,7 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="twitter:card" content="player" />
+    <!-- HAPUS semua tag Open Graph / Twitter Card (jangan ada og:*, twitter:*) -->
+
+<!-- Tambahkan meta robots untuk minta crawler tidak mengindeks/ambil gambar -->
+<meta name="robots" content="noindex, noimageindex, noarchive, nosnippet" />
+<meta name="googlebot" content="noindex, noimageindex, noarchive" />
+
+<!--     <meta name="twitter:card" content="player" />
     <meta name="twitter:site" content="@salhadillah" />
     <meta name="twitter:title" content="VideyPlayer" />
     <meta name="twitter:description" content="Pemutar Video Responsif" />
@@ -12,7 +18,7 @@
       content="https://videykuplay.pages.dev/player.html"
     />
     <meta name="twitter:player:width" content="1280" />
-    <meta name="twitter:player:height" content="720" />
+    <meta name="twitter:player:height" content="720" /> -->
     <title>VideyPlayer</title>
     <link
       rel="stylesheet"
