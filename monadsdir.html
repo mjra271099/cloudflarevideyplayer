@@ -1,0 +1,37 @@
+<?php
+$links = [
+  "https://otieu.com/4/8244851",
+      "https://otieu.com/4/9066087",
+      "https://otieu.com/4/9807187",
+      "https://otieu.com/4/7943451",
+      "https://uselessbackstage.com/hy0p69udt?key=2bef78c2bf7ec2382b075fca9b8d2f9a",
+      "https://uselessbackstage.com/qpf2zq9q?key=60e24ede3e83959e5085fb0fae244f1d",
+      "https://uselessbackstage.com/sjjafg21g4?key=1c5f4b367d24c0b4e131700a5989292c",
+      "https://uselessbackstage.com/pecz852q6e?key=b87165c531f6572ae3ac3f20cbd2364c",
+      "https://uselessbackstage.com/dcaqdas9a?key=0998c5779fc93ea279dcbf361329a416",
+      "https://uselessbackstage.com/iu3eur584?key=2188b20cc0f8baefbd7f7d94cb850b6c",
+      "https://uselessbackstage.com/dgbuid554?key=934fc2658518f0e4afafbc84510afc7c",
+      "https://uselessbackstage.com/qj8577ktgi?key=74e0c6cacba153c9409d64e66ab40813",
+      "https://uselessbackstage.com/k0rypxydj?key=f440328df808d9b0e120134939597eeb",
+      "https://uselessbackstage.com/qebbeb7m?key=b77f890583691ee7af991ebcb338cdd0"
+];
+
+$counterFile = __DIR__ . "/counter.txt";
+$index = file_exists($counterFile) ? (int)file_get_contents($counterFile) : 0;
+$url = $links[$index];
+$index = ($index + 1) % count($links);
+file_put_contents($counterFile, $index);
+?>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script>
+    history.replaceState(null, null, location.href);
+    location.replace("<?= $url ?>");
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=<?= $url ?>">
+  </noscript>
+</head>
+</html>
