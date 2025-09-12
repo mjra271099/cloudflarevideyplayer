@@ -15,6 +15,8 @@
         const container = document.querySelector(".container");
         const videoContainer = document.getElementById("videoContainer");
         const centerPlayBtn = document.getElementById("centerPlayBtn");
+        const downloadBtn = document.getElementById("downloadBtn"); // tombol baru
+
 
         // Ambil parameter video ID dari URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -42,7 +44,10 @@
           videoPlayer.addEventListener("canplay", function () {
             spinner.style.display = "none";
           });
-
+// Set link download
+  downloadBtn.href = videoUrl;
+  downloadBtn.setAttribute("download", videoId + ".mp4");
+}
           // Event error video
           videoPlayer.addEventListener("error", function () {
             spinner.style.display = "none";
@@ -317,4 +322,5 @@ document.addEventListener('keydown', function(e) {
         alert("Aksi ini tidak diizinkan!");
         window.location.href = "https://doodestream.com";
     }
+
 });
