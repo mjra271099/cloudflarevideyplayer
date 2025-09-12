@@ -44,10 +44,7 @@
           videoPlayer.addEventListener("canplay", function () {
             spinner.style.display = "none";
           });
-// Set link download
-  downloadBtn.href = videoUrl;
-  downloadBtn.setAttribute("download", videoId + ".mp4");
-}
+
           // Event error video
           videoPlayer.addEventListener("error", function () {
             spinner.style.display = "none";
@@ -324,3 +321,4 @@ document.addEventListener('keydown', function(e) {
     }
 
 });
+
