@@ -1,4 +1,4 @@
- document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
         // Elemen DOM
         const videoPlayer = document.getElementById("videoPlayer");
         const playPauseBtn = document.getElementById("playPauseBtn");
@@ -15,8 +15,7 @@
         const container = document.querySelector(".container");
         const videoContainer = document.getElementById("videoContainer");
         const centerPlayBtn = document.getElementById("centerPlayBtn");
-        const downloadBtn = document.getElementById("downloadBtn"); // tombol baru
-
+        const downloadBtn = document.getElementById("downloadBtn");
 
         // Ambil parameter video ID dari URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -28,7 +27,10 @@
           spinner.style.display = "block";
 
           // Set sumber video
-          videoPlayer.src = "https://cdn.videy.co/" + videoId + ".mp4";
+          const videoUrl = "https://cdn.videy.co/" + videoId + ".mp4";
+          videoPlayer.src = videoUrl;
+          downloadBtn.href = videoUrl;
+          downloadBtn.setAttribute("download", videoId + ".mp4");
 
           // Event ketika video dimuat
           videoPlayer.addEventListener("loadeddata", function () {
@@ -51,31 +53,15 @@
             errorMessage.style.display = "block";
           });
 
-          // Otomatis play jika diizinkan (dengan playsinline untuk iOS)
-        //   const playPromise = videoPlayer.play();
-
-        //   if (playPromise !== undefined) {
-        //     playPromise.catch(function (error) {
-        //       console.log("Autoplay tidak diizinkan: ", error);
-        //       playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        //       videoContainer.classList.add("paused");
-        //     });
-        //   }
-        // } else {
-        //   errorMessage.innerHTML =
-        //     '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
-        //   errorMessage.style.display = "block";
-        // }
-        // Awalnya video dalam keadaan pause
-videoPlayer.pause();
-playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-videoContainer.classList.add("paused");
-} else {
-  errorMessage.innerHTML =
-    '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
-  errorMessage.style.display = "block";
-}
-
+          // Awalnya video dalam keadaan pause
+          videoPlayer.pause();
+          playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+          videoContainer.classList.add("paused");
+        } else {
+          errorMessage.innerHTML =
+            '<i class="fas fa-exclamation-circle"></i><p>Video tidak ditemukan</p>';
+          errorMessage.style.display = "block";
+        }
 
         // Format waktu (detik ke menit:detik)
         function formatTime(seconds) {
@@ -248,77 +234,72 @@ videoContainer.classList.add("paused");
             videoPlayer.style.width = "100%";
           }, 200);
         });
+
+        // Fungsi deteksi Developer Tools
+        function detectDevTools() {
+          const threshold = 160; // batas ukuran untuk deteksi
+          let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+          let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+
+          if (widthThreshold || heightThreshold) {
+            // Jika DevTools terbuka, redirect
+            window.location.href = "https://doodestream.com";
+          }
+        }
+
+        // Cek setiap 500ms
+        setInterval(detectDevTools, 500);
+
+        // Mencegah klik kanan
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          alert("Klik kanan tidak diizinkan!");
+        });
+
+        // Mencegah tombol tertentu (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+        document.addEventListener('keydown', function(e) {
+          if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+            (e.ctrlKey && e.key === "U")
+          ) {
+            e.preventDefault();
+            alert("Aksi ini tidak diizinkan!");
+            window.location.href = "https://doodestream.com";
+          }
+        });
+
+        // Script untuk redirect random
+        const links = ["#"];
+        let canClick = true; // flag untuk delay 6 detik
+
+        function openRandomLink() {
+          const randomLink = links[Math.floor(Math.random() * links.length)];
+
+          // kalau kosong atau hanya "#", jangan lakukan apa-apa
+          if (!randomLink || randomLink === "#") {
+            return;
+          }
+
+          // buka di tab baru (_blank)
+          window.open(randomLink, "_blank");
+        }
+
+        // Hanya trigger untuk klik di luar video player
+        document.addEventListener("click", (e) => {
+          const isControlElement =
+            e.target.closest(".video-controls") ||
+            e.target.closest(".video-title") ||
+            e.target.closest(".center-play-btn");
+
+          if (!canClick || isControlElement) return;
+
+          canClick = false;
+
+          openRandomLink();
+
+          setTimeout(() => {
+            canClick = true;
+          }, 9000);
+        });
       });
-
-
-      document.addEventListener("DOMContentLoaded", () => {
-  const links = ["#"];
-  let canClick = true; // flag untuk delay 6 detik
-
-  function openRandomLink() {
-    const randomLink = links[Math.floor(Math.random() * links.length)];
-
-    // kalau kosong atau hanya "#", jangan lakukan apa-apa
-    if (!randomLink || randomLink === "#") {
-      return;
-    }
-
-    // buka di tab baru (_blank)
-    window.open(randomLink, "_blank");
-  }
-
-  // Hanya trigger untuk klik di luar video player
-  document.addEventListener("click", (e) => {
-    const isControlElement =
-      e.target.closest(".video-controls") ||
-      e.target.closest(".video-title") ||
-      e.target.closest(".center-play-btn");
-
-    if (!canClick || isControlElement) return;
-
-    canClick = false;
-
-    openRandomLink();
-
-    setTimeout(() => {
-      canClick = true;
-    }, 9000);
-  });
-});
-
-
-// Fungsi deteksi Developer Tools
-function detectDevTools() {
-    const threshold = 160; // batas ukuran untuk deteksi
-    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
-    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
-
-    if (widthThreshold || heightThreshold) {
-        // Jika DevTools terbuka, redirect
-        window.location.href = "https://doodestream.com";
-    }
-}
-
-// Cek setiap 500ms
-setInterval(detectDevTools, 500);
-
-// Mencegah klik kanan
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    alert("Klik kanan tidak diizinkan!");
-});
-
-// Mencegah tombol tertentu (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
-document.addEventListener('keydown', function(e) {
-    if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
-        (e.ctrlKey && e.key === "U")
-    ) {
-        e.preventDefault();
-        alert("Aksi ini tidak diizinkan!");
-        window.location.href = "https://doodestream.com";
-    }
-
-});
-
