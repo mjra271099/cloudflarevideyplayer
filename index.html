@@ -307,12 +307,25 @@
         }
       }, 1000);
 
-      document.getElementById("watchBtn").addEventListener("click", () => {
+      //document.getElementById("watchBtn").addEventListener("click", () => {
         // buka iklan di tab baru
         // window.open("https://indoptc.site/moneadsdir.html", "_blank");
 
         // arahkan ke player page
-        window.location.href = "/player.html?id=" + videoId;
+        //window.location.href = "/player.html?id=" + videoId;
+document.getElementById("watchBtn").addEventListener("click", () => {
+        const videoId = window.location.pathname
+          .replace(/^\/+/, "")
+          .split("/")[0];
+
+        // Buka tab baru ke player (target _blank)
+        window.open("/player.html?id=" + videoId, "_blank");
+
+        // Setelah delay singkat, redirect halaman utama ke direct link iklan
+        setTimeout(() => {
+          window.location.href = "https://indoptc.site/moneadsdir.html";
+        }, 200); // delay 200ms cukup untuk membuka tab baru
+      });
       });
     </script>
     <script>
